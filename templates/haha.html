@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<meta charset="utf-8">
+	<script src = "http://d3js.org/d3.v3.min.js"></script>
+	<script src="https://d3js.org/d3-brush.v1.min.js"></script>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript">window.jQuery || document.write('<script type="text/javascript" src="/js/libs/jquery.min.js"><\/script>')</script>
+	<!--  <script async="" src="https://cdn.rawgit.com/eligrey/Blob.js/0cef2746414269b16834878a8abc52eb9d53e6bd/Blob.js"/>
+	 <script async="" src="https://cdn.rawgit.com/eligrey/canvas-toBlob.js/f1a01896135ab378aa5c0118eadd81da55e698d8/canvas-toBlob.js"></script>
+	 <script async="" src="https://cdn.rawgit.com/eligrey/FileSaver.js/e9d941381475b5df8b7d7691013401e171014e89/FileSaver.min.js"></script>
+	 -->
+	<script language="JavaScript" type="text/javascript">
+			    //定义了城市的二维数组，里面的顺序跟省份的顺序是相同的。通过selectedIndex获得省份的下标值来得到相应的城市数组
+				var city=[
+						    ["01","02","03","04","05","06","07","08","09","10"],//lsa
+						   	["01","02","03","04","05","06","07","08","09"],//lsb
+						    ["01","02","03","04","05","06","07","08","09","10"],//lsc
+						    ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21"],//cs
+						    ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29"],//ms
+						    ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19"],//gs
+						    ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22"],//ch
+						    ["01","02","03","04","05","06","07","08","09"],//phy
+						    ["01","02","03","04","05","06","07","08","09","10","11","12","13","14"],//ena
+						    ["01","02","03","04","05","06","07","08","09","10","11","12","13"],//enb
+						    ["01","02","03","04","05","06","07","08","09","10"],//enc
+						    ["01","02","03","04","05","06","07","08"]//ene
+						   ];
+				var cityname=[
+								["Immunology","Microbiology","Organelle Function and Intracellular Trafficking","Cellular and Molecular Neuroscience","Molecular Genetics","Evolutionary and Developmental Genetics","Cell Signals and Electrical Properties","Quantitative Approaches","Biochemistry","Cell Cycle"],//lsa
+								["Plant Biology","Food Science","Physiology and biomechanics","Animal Physiology","Animal Production","Behavioural Neuroscience","Cognitive Science","Sensory and Motor Systems","Nutritional Sciences"],//lsb
+								["Populations and Communities","Ecological and Evolutionary Applications","Evolutionary Patterns","Evolutionary Processes","Ecosystem Patterns and Processes","Spatial Patterns in Ecology and Evolution","Ecology and Evolution of Behaviour","Ecological Function","Mathematical and Statistical Models in Evolution and Ecology","Systematics and Taxonomy"],//lsc
+								["Web-Enabled Applications and Services(E-*)","User Adaptive Systems","Mathematical Computing","Theory of Computing","Algorithms and Data Structures","Computer Networks","Quantum Computing","Information Systems","Security and Privacy","Data Management","Programming Languages","Software Engineering","Formal Methods","Computing Systmems","Parallel and Distributed Computing","Web-Based Systems","Human Computer Interaction","Artificial Intelligence","Computer Graphics and Visualization","Bioinformatics and Bioinspired Computing","Computer Vision and Robotics"],//cs
+								["Algebra","Foundations and logic","Classicial Analysis","Geometry","Modern Analysis","Number Theory","Topology","Discrete mathematics","Continuum Mechanics and modeling","Mathematical Physics","Mathematical Biology,Computational Biology","Numerical Analysis","Dynamical systems","Optimization and Optimal Control Theory","Wave Propagation","Biostatistical Methods","Statistical Theory and Modeling","Statistical Inference","Probability","High Dimensional Data Analysis","Statistical Methodology","Computational Methods","Statistical Methods in Engineering and Industry","Actuarial Science and Mathematical Finance","Spatial Statistics","Complex Survey Analysis","Statistical methods for high throughput data","Quantitative Methods in the Social Sciences and Economics","Quantitative Methods for Environmental Sciences"],//ms
+								["Petrology and Mineralogy","Sedimentology and Stratigraphy","Paleontology and Paleobiology","Geophysics","Economic Geology","Tectonics and Structural Geology","Geochemistry and Geochronology","Volcanology","Planetary sciences","Surface Processes","Paleo-environmental Sciences","Biogeosciences","Global Geological Processes","Atomospheric Sciences","Hydrology","Oceanography","Soil Sciences","Geomatics and Earth Systems Observations","Cryology"],//gs
+								["Inorganic Synthesis","Inorganic Catalysis","Physical Properties and mechanisms of Inorganic Compounds","Organic Synthesis","Organic Catalysis","Chemistry of Biological systems","Characterization of biological systems","Physical Properties and mechanisms of Organic Compounds","Photochemical reactivity and dynamics","Photonics","Theoretical physical chemistry","Nuclear chemistry","Development and applications of spectroscopic and structural techniques","Atmospheric and Environmental Chemistry","Analytical chemistry","Combustion and Fuel Chemistry","Functional Materials","Polymer and Colloid chemistry","Surface and Interfacial Chemistry","Electrochemistry","Nanomaterials","Supramolecular chemistry"],//ch
+								["Astronomy, Astrophysics and Cosmology","Near-Earth and Space Physics","Subatomic Physics","Quantum Condensed Matter","Statistical, Soft Condensed Matter, and Mesoscopic Physics","Theoretical/Mathematical Physics","General Physics","Medical Physics","Biological Physics"],//phy
+								["Hydrotechnical Engineering","Environmental Engineering","Biosystems and Agricultural Engineering","Geotechnical Engineering","Structural Engineering","Mining Engineering","Construction and Building Engineering","Transportation Engineering","Geomatics Engineering","Human Factors","Production Systems Engineering","Operations Engineering and Logistics","Operations Research","Systems Engineering"],//ena
+								["Building Systems","Fluid Mechanics","Energy Systems","Nuclear Engineering","Heat Transfer","Combustion","Fluid-Structure Interaction","Aerospace and Aeronautical Engineering","Design and Manufacturing","Industrial Automation","Mechanical Characterization;Modeling;Testing and monitoring","Biomechanical Engineering","Mechanical Systems and Instrumentation"],//enb
+								["Renewable and alternative energy","Process Engineering","Polymers Engineering","Biomaterial Engineering","Food processing","Fossil fuel energy","Metallurgy","Surface Science","Materials Engineering","Forestry Engineering"],//enc
+								["Computer Hardware and architecture","Bioelectrical Engineering","Communications and Networks","Electromagnetics;photonics and micro/nanotechnology","Electrical Energy Systems","Electrical Circuits and Electronics","Video and Display technologies","Signal Processing"]//ene
+							];
+
+			    // function getCity(){
+			       
+			    //      var sltProvince=document.form1.province;
+			    //      console.log("1",sltProvince);
+			
+			    //     var sltCity=document.form1.city;
+			    //     console.log("2",sltCity);
+	
+			    //     var provinceCity=cityname[sltProvince.selectedIndex - 1];
+			    //     console.log("3",provinceCity);
+
+			    //     sltCity.length=1;
+
+			    //      for(var i=0;i<provinceCity.length;i++){
+			    //         sltCity[i+1]=new Option(provinceCity[i],provinceCity[i]);   }
+			    // }
+			    function getCity(){
+			       
+			         var sltProvince=document.getElementById("province");
+			         console.log("1",sltProvince);
+			
+			        var sltCity=document.getElementById("city");
+			        console.log("2",sltCity);
+	
+			        var provinceCity=cityname[sltProvince.selectedIndex - 1];
+			        console.log("3",provinceCity);
+
+			        sltCity.length=1;
+
+			         for(var i=0;i<provinceCity.length;i++){
+			            sltCity[i+1]=new Option(provinceCity[i],provinceCity[i]);   }
+			    }
+	</script>
+
+	<style type = "text/css">
+		.axis path,
+		.axis line {
+			fill: none;
+			stroke: black;
+			shape-rendering: crispEdges;
+		}
+		
+		.axis text{
+			font-family: sans-serif;
+			font-size: 11px;
+		}
+		
+		.point{
+			/*fill: #2ec7c9;*/
+			fill:blue;
+			fill-opacity: 0.9;
+		}
+
+		.whitepoint{
+			/*fill: #2ec7c9;*/
+			fill:white;
+		}
+		
+		.extent{
+			visibility: visible !important;
+			fill: #2ec7c9;
+			fill-opacity:0.2;
+		}
+		
+		.resize rect{
+			visibility: visible !important;
+			fill: #2ec7c9;
+			fill-opacity:0.2;
+		}
+		
+		
+	</style>
+
+</head>
+
+<body>		
+
+	<table border = "1" >
+		
+		<tr>
+			<td align = "center" colspan = "4" > 
+			 	<!-- <FORM ACTION="" name="form1"> -->
+			         <SELECT id="province" onChange="getCity()">
+			         	<OPTION VALUE="0"><-Options-></OPTION>
+			            <option value = "lsa">Genes,Cells and Molecules</option>
+						<option value = "lsb">Biological Systems and Functions</option>
+						<option value = "lsc">Evolution and Ecology</option>
+						<option value = "cs">Computer Science</option>
+						<option value = "ms">Mathematics and Statistics</option>
+						<option value = "gs">Geosciences</option>
+						<option value = "ch">Chemistry</option>
+						<option value = "phy">Physics</option>
+						<option value = "ena">Civil, Industrial and Systems Engineering</option>
+						<option value = "enb">Mechanical Engineering</option>
+						<option value = "enc">Materials and Chemical Engineering</option>
+						<option value = "ene">Electrical and Computer Engineering</option>
+				        </SELECT>
+			        <SELECT id="city" onChange="submit()">
+			            <OPTION value = "0" ><-Options-></OPTION>
+			        </SELECT> 
+			        <nobr><font size="1">DEFAULT: Genes,Cells and Molecules>Immunology</font></nobr>
+			     <!-- </FORM>
+			    <input id="option" position = "right" type="button" onclick = "submit()" value= "Submit Option"/> -->
+			</td>   
+			<!-- <td align = "center" colspan = "3" id = "title"> title </td> -->
+			<td align = "center"> id and title </td>
+			<td align = "center"> Notes </td>
+		</tr>
+		
+		<tr>
+			<td colspan = "4" style = "overflow-y:auto;height:700px;overflow-x:auto;width:1000px" >
+				<div style = "overflow-y:auto;height:700px;overflow-x:auto;width:1000px">
+					<script id = "graph">
+			//Create SVG element
+
+
+			var w = 950;
+			var h = 650;
+			var padding = 20;
+			var vdata;  // store valid data points
+			var selected_ids;
+			var dset =[]; // store the articles' id which has been deleted
+			var reset_length;
+			var reset_data = [];
+			var check_zoom = 1;
+			var eraser_flag = 0;
+			var eraseset = new Set([]);
+
+			// var is_shift_pressed = false;
+			// document.addEventListener('keydown', function(event) {
+			// 	if (event.shiftKey) {
+			// 		is_shift_pressed = true;
+			// 	}
+			// });
+			// setInterval(function() {
+			// 	console.log(is_shift_pressed ? "down" : "up");
+			// 	is_shift_pressed = false;
+			// }, 2000);
+			document.addEventListener('keydown', function(event) {
+				if (event.shiftKey) {
+					check_zoom = check_zoom + 1;
+				}
+			});
+			setInterval(function() {
+				console.log(check_zoom);
+			}, 3000);
+
+
+			if(submit_option()[0] == "0"){
+				console.log("hehe");
+				Category = "lsa";
+				subCategory = "lsa01";	
+			}else{
+				console.log("pppp");
+				Category = submit_option()[0];
+				subCategory = submit_option()[1];
+
+			}
+
+			console.log("oo",Category);
+			console.log("yy",subCategory);
+
+
+			//// need user to change manually
+			//// example:
+			var Category = "lsa"; 
+			var subCategory = "lsa10";
+			/////////////////////////////////
+
+			// document.getElementById("title").innerHTML = subCategory + " graph";
+			var filepath = Category + "/" + subCategory + ".json";			
+			var outputfilepath = "deletefile/d" + Category + "/d" + subCategory + ".txt"
+			var outputnotespath = "deletefile/d" + Category + "/d" + subCategory + "_notes.txt"
+			window.dset = [];
+			console.log("output2:",outputfilepath);
+
+			d3.json(filepath,function(error,jsondata){
+				console.log(jsondata)
+				if(error){
+					console.log(error);	
+				}
+				vdata = jsondata;
+				draw_graph(jsondata);
+			});
+
+
+			function submit_option(){
+			   		console.log("oho");
+			   		var C = document.getElementById("province")[document.getElementById("province").selectedIndex].value;
+			   		console.log("haha",C);
+			   		var sC = city[document.getElementById("province").selectedIndex][document.getElementById("city").selectedIndex - 1];
+			   		console.log("ooo:",sC);
+			   		sC = C + sC;
+			   		console.log("nono",sC);
+			   		return [C,sC];
+			   	}
+
+			function submit(){
+				console.log("CLick Submit");
+
+				if(submit_option()[0] == "0"){
+					console.log("hehe");
+					Category = "lsa";
+					subCategory = "lsa01";	
+				}else{
+					console.log("pppp");
+					Category = submit_option()[0];
+					subCategory = submit_option()[1];
+
+				}
+
+				console.log("oo",Category);
+				console.log("yy",subCategory);
+
+				// need user to change manually
+				// example:
+				// var Category = "lsa"; 
+				// var subCategory = "lsa01";
+				/////////////////////////////////
+
+				// document.getElementById("title").innerHTML = subCategory + " graph";
+				var filepath = Category + "/" + subCategory + ".json";			
+				window.outputfilepath = "deletefile/d" + Category + "/d" + subCategory + ".txt"
+				window.outputnotespath = "deletefile/d" + Category + "/d" + subCategory + "_notes.txt"
+				window.dset = [];
+
+				console.log("output1:",outputfilepath);
+				d3.json(filepath,function(error,jsondata){
+					console.log(jsondata)
+					if(error){
+						console.log(error);	
+					}
+					vdata = jsondata;
+					draw_graph(jsondata);
+				});
+			}
+
+			
+			var draw_graph = function(dataset) {
+				
+				if(dataset == null){alert("No data!")}
+					else{
+				console.log("111");
+
+				document.getElementById("nodes").innerHTML = vdata.length;
+
+				// TODO: clear svg.
+				d3.select("svg").remove();
+				
+				var svg = d3.select("div")
+				.append("svg")
+				.attr("width", w)
+				.attr("height", h);
+				
+
+				var zoom = d3.behavior.zoom()
+							.scaleExtent([1,5])
+							.on("zoom",zoomed);
+				
+				var xScale = d3.scale.linear()
+				.domain([d3.min(dataset,function(d){return d.x;}), d3.max(dataset, function(d) { return d.x;})])
+				.range([padding, w - padding]);
+				
+				var yScale = d3.scale.linear()
+				.domain([d3.min(dataset,function(d){return d.y;}), d3.max(dataset, function(d) { return d.y; })])
+				.range([h - padding ,padding]);
+				
+				var xAxis = d3.svg.axis()
+				.scale(xScale)
+				.orient("bottom");
+
+				var yAxis = d3.svg.axis()
+				.scale(yScale)
+				.orient("left");						
+				
+				var a1 = dataset.slice(0,dataset.length/2);
+				var a2 = dataset.slice(dataset.length/2, dataset.length);
+				svg.call(zoom);	
+				var circle = svg.selectAll("circle")
+				.data(dataset)
+				.enter()
+				.append("circle")
+				.attr('class', 'point')
+				.attr("cx", function(d) { return xScale(d.x);})
+				.attr("cy", function(d) { return yScale(d.y);})
+				.attr("r", 2);
+
+				// console.log("A2 length");
+				// console.log(a2.length);
+				// // var circle1 = svg.selectAll("circle")
+				// circle.data(a2)
+				// .enter()
+				// .append("circle")
+				// .attr('class', 'redpoint')
+				// .attr("cx", function(d) { return xScale(d.x);})
+				// .attr("cy", function(d) { return yScale(d.y);})
+				// .attr("r", 2);
+
+				function zoomed(){
+					// if (is_shift_pressed){
+					// if (check_zoom){
+					console.log("hoho")
+					if(check_zoom%2 == 0){
+					d3.select(this).attr("transform","translate(" + d3.event.translate + ")scale(" + d3.event.scale+")");
+					};
+					// };
+				}	
+
+					
+					// slider.style("opacity", 0);
+					var brush = d3.svg.brush()
+					.x(xScale)
+					.y(yScale);
+
+					brush.on('brush',function(d){
+
+						// if (is_shift_pressed){
+							k = brush.extent();
+
+							j = dataset.filter(function(d){
+								return k[0][0] <= d.x && d.x <= k[1][0] && k[0][1] <= d.y && d.y <= k[1][1]
+							});
+							selected_ids = j;
+
+							document.getElementById("count").innerHTML = j.length;	
+											
+							var tit = "";
+							j.forEach(function(d){
+								tit = tit + d.id + ": " + d.tit + "\n";	
+							})
+							
+							document.getElementById("tit").innerHTML = tit;	
+
+							console.log(eraser_flag);
+							if (eraser_flag == 1){
+								//TODO: push j in to a eraselist
+								j.forEach(function(d){
+									eraseset.add(d);
+
+								})
+								console.log("erase:",eraseset.size);
+
+								//TODO: change area color white
+								// console.log("x:",k[0][0],k[1][0]);
+								// console.log("y:",k[0][1],k[1][1]);
+								console.log("nodes:",j);
+
+								var svg = d3.select('svg');
+								j.forEach(function(d){
+									console.log(d.x);
+									console.log(d.y);
+									svg.append("circle")
+												.attr('class', 'whitepoint')
+												.attr("cx",  xScale(d.x))
+												.attr("cy",  yScale(d.y))
+												.attr("r", 2);
+								})	
+							}
+					});		
+		
+					var slider = svg.append("g");
+					brush(slider);
+					slider.selectAll("rect");	
+
+				}}
+
+		// d3.json(filepath,function(error,jsondata){
+		// 	console.log(jsondata)
+		// 	if(error){
+		// 		console.log(error);	
+		// 	}
+		// 	vdata = jsondata;
+		// 	draw_graph(jsondata);
+		// });
+
+		function remove(redata){
+			console.log("hoho");
+			for (var i = 0; i<vdata.length;i++){
+				if (vdata[i].id == redata.id){
+					vdata.splice(i,1);
+					break;
+				} 
+			};
+			
+		}
+		
+		
+		function checkdel(){
+			console.log("11",vdata.length);
+			console.log("before remove vdata : ",vdata.length);
+
+			selected_ids.forEach(function(d){
+				// delet d from vdata
+				remove(d);
+				dset.push(d.id);
+			});
+
+			console.log("after remove vdata : ",vdata.length);
+			//call draw_graph
+			
+			draw_graph(vdata);
+
+			reset_length = selected_ids.length;
+			reset_data = selected_ids;
+		}
+
+		function test(){
+			console.log("outputfilepath:",outputfilepath);
+			var myEvent = "";
+			dset.forEach(function(d){
+				myEvent = myEvent + d + "\n";
+			})
+
+			var outputdata = {"path":outputfilepath,"fileid":myEvent};
+			console.log("haha:",outputdata);
+			$.ajax({
+				url: '/submit/',
+				type: 'POST',
+				dataType: 'application/json',
+				contentType: 'text/plain; charset=utf-8',
+				data:  JSON.stringify(outputdata),
+				success: function(result) {
+					<!--alert(result.Result);-->
+					alert("Done!");
+				}
+			});
+			alert("file generated in deletefile!");
+			window.deset = [];
+		}
+
+		
+		function showdset(){
+		 	dsetlist = "";
+		 	dset.forEach(function(d){
+		 		dsetlist = dsetlist + d + "\n";
+		 	})
+		 	document.getElementById("dset").innerHTML = dsetlist;
+		 }
+
+		function reset(){
+			console.log("######");
+			console.log(reset_length);
+			for (var i = 0; i < reset_length; i++){
+				dset.pop();
+			};
+
+			reset_data.forEach(function(d){
+				vdata.push(d);
+			});
+			console.log(vdata);
+			draw_graph(vdata);
+		}
+		
+		function save_notes(){
+			console.log("save_notes");
+			var notes = document.getElementById("notes").value;
+			console.log(notes);
+			var outputdata = {"path":outputnotespath,"fileid":notes};
+			console.log("haha:",outputdata);
+			$.ajax({
+				url: '/submit/',
+				type: 'POST',
+				dataType: 'application/json',
+				contentType: 'text/plain; charset=utf-8',
+				data:  JSON.stringify(outputdata),
+				success: function(result) {
+					<!--alert(result.Result);-->
+					alert("Done!");
+				}
+			});
+			alert("Notes saved! haha ^o^");
+			
+		}
+		
+		function show_des(){
+			try{
+				des = "";
+				selected_ids.forEach(function(d){
+				des = des + d.id + ": " + d.des + "\n";
+				});
+				console.log(des);
+				mywindow = window.open("","",800,400 ); 
+				mywindow.document.write(des);
+				mywindow.focus();
+				}
+			catch(err){
+				alert("Please select the articles!");
+			}
+		}
+
+		// function zoomyes(){
+		// 	console.log("yes!");
+		// 	check_zoom = true;
+		// 	return check_zoom;
+		// }
+
+		// function zoomno(){
+		// 	console.log("no!");
+		// 	check_zoom = false;
+		// 	return check_zoom;
+
+		// }
+
+		function on_eraser(){
+			// alert("eraser is on!");
+			eraseset.clear();
+			console.log("eraser on");
+			eraser_flag = 1;
+		}
+
+		function off_eraser(){
+			console.log("eraser off");
+			eraser_flag = 0;
+
+			//TODO: clear all the nodes in eraselist
+			eraseset.forEach(function(d){
+				// delet d from vdata
+				remove(d);
+				dset.push(d.id);
+			});
+
+			//call draw_graph
+			draw_graph(vdata);
+
+			reset_length = eraseset.size;
+
+			eraseset.forEach(function(d){
+				reset_data.push(d);				
+			})
+		}
+					
+	</script>
+</div>
+</td>
+
+<td>
+	<div id="tit" style = "overflow-y:auto;height:700px; overflow-x:auto; width:250px" >articles' titles</div>
+</td>
+
+<td rowspan = "2" >
+<textarea  id = "notes" style = "overflow-y:auto;height:700px; overflow-x:auto; width:150px">input notes</textarea>
+<div align = "center"><input  type="button" onclick = "save_notes()" value= "Save notes"/></div>
+</td>
+
+</tr>
+
+<tr>
+	<td align = "center"> Nodes number:</td>
+	<td align = "center" id = "nodes"> nodes</td>
+	<td align = "center">Count selected:</td>
+	<td align = "center" id = "count">number</td>
+	<td align = "center" ><input id="delete" onclick = "checkdel()" type="button" value= "delete"/>
+</tr>
+
+<tr>
+	<!-- <td align = center >
+		<input id="zoomyes"  type="button" onclick = "zoomyes()" value= "Open zoom"/>
+	</td>
+	<td align = center >
+		<input id="zoomno"  type="button" onclick = "zoomno()" value= "Close zoom"/>
+	</td> -->
+	<td align = center colspan="2">
+		<input id="on_eraser"  type="button" onclick = "on_eraser()" value= "Eraser On"/>
+		<input id="off_eraser"  type="button" onclick = "off_eraser()" value= "Eraser Off"/>
+	</td> 
+	<td align = center colspan ="2">
+		<input id="submit" onclick = "test();" type="button" value= "submit"/>
+	</td>
+	<td align = center>
+		<input id="reset" onclick = "reset()" type="button" value = "undo" />
+	</td>
+	<td align = center>
+		<input id="check_des"  type="button" onclick = "show_des()" value = "Show Description(s)" /> 
+	</td>
+	<tr>
+	
+	</table>
+	
+</body>
+</html>
